@@ -1,9 +1,10 @@
+from multiprocessing import Process, Value
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import audio_guess as ar
+from audio_recorder import AudioRecorder
 import sys
 from enum import Enum
 
@@ -23,10 +24,10 @@ class Alignment(Enum):
 
 class MyWindow(QMainWindow):
 
-   def __init__(self):
+   def __init__(self, variable):
       super(MyWindow,self).__init__()
       self.isRecording = False
-      self.audioRecorder = ar.AudioRecorder("./", "./")
+      self.variable = variable
       self.initUI()
 
    def startRecording(self):
@@ -34,14 +35,13 @@ class MyWindow(QMainWindow):
       self.recordButton.setText("Stop")
       self.recordButton.adjustSize()
       
-      asyncio.run(self.audioRecorder.startRecordingAsync())
-
+      self.variable.value = 1
    def stopRecording(self):
       print("Stop recording audio")
       self.recordButton.setText("Start")
       self.recordButton.adjustSize()
 
-      self.audioRecorder.stopRecording()
+      self.variable.value = 0
 
    def onButtonClicked(self):
       if self.isRecording == True:
@@ -101,12 +101,27 @@ class MyWindow(QMainWindow):
       #self.align_object(self.label,Alignment.BOTTOM_CENTER)
       self.generateTextLabel.move(int(WINDOW_WIDTH/2) - int(self.generateTextLabel.frameGeometry().width()/2), WINDOW_HEIGHT - int(self.generateTextLabel.frameGeometry().height()))
 
-
-def window():
+def window(variable):
    app = QApplication(sys.argv)
-   win = MyWindow()
+   win = MyWindow(variable)
    win.show()
    sys.exit(app.exec_())
 
-if __name__ == '__main__':
-   window()
+
+def main():
+   a = AudioRecorder("./", "./")
+   variable = Value('i', 0)
+
+   appProcess = Process(target=window, args =(variable,))
+   
+   audioProcess = Process(target=a.build, args =(variable,))
+   audioProcess.daemon = True               # daemon threads will be destroy when main process ends
+   
+   audioProcess.start()
+   appProcess.start()
+   appProcess.join()                  # join process to wait until it ends
+    
+
+
+if __name__ == "__main__":
+   main()

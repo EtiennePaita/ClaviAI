@@ -1,48 +1,27 @@
 import pyaudio
 import wave
 import os
-import argparse
 import audio_spliter as AudioSpliter
 import spectrum_generator as SpectrumGenerator
-from multiprocessing import Process
-import asyncio
+import time
+from multiprocessing import Process, Value
 
-# Add arguments to the script
-#parser = argparse.ArgumentParser(description='A program to record audio files.')
-#parser.add_argument("src_directory", help="The directory path containing the orignals audio files.")
-#parser.add_argument("dest_directory", help="The directory path that will contain the splitted audio files.")
-#args = parser.parse_args()
+isRecording = False
+isRunning = True
 
 class AudioRecorder:
-    vtest = 0
+    
     def __init__(self, src_directory, dest_directory):
-        self.srcDirectory, self.destDirectory, self.isRecording = src_directory, dest_directory, False
+        self.srcDirectory, self.destDirectory = src_directory, dest_directory
         #self.initRecorder()
-
-    async def loopTask(self):
-        print("-- In task --")
-        print(self.isRecording)
-        await asyncio.sleep(5)
-        print(self.isRecording)
-        print("-- Quit async task --")
-
-    async def startRecordingAsync(self):
-        self.isRecording = True
-        t = asyncio.create_task(self.loopTask())
-        await t
-        self.isRecording = False
-        await asyncio.sleep(3)
-        self.isRecording = False
-        print(self.vtest)
-
-
+    
     def startRecording(self):
-        self.isRecording = True
-        self.p1 = Process(target = self.initRecorder())
-        self.p1.start()
+        global isRecording
+        isRecording = True
 
     def stopRecording(self):
-        self.isRecording = False
+        global isRecording
+        isRecording = False
 
     def initRecorder(self):
         chunk = 1024  # Record in chunks of 1024 samples
@@ -65,9 +44,9 @@ class AudioRecorder:
         frames = []  # Initialize array to store frames
 
         # Store data in chunks for 3 seconds
-        while self.isRecording:
-            data = stream.read(chunk)
-            frames.append(data)
+        
+        data = stream.read(chunk)
+        frames.append(data)
 
         # Stop and close the stream 
         stream.stop_stream()
@@ -97,8 +76,13 @@ class AudioRecorder:
         
         SpectrumGenerator.generate_spectrograms(self.srcDirectory, spectrum_path)
         SpectrumGenerator.generate_spectrograms(self.destDirectory, spectrum_path)
-        self.p1.end()
 
-#if __name__ == "__main__":
-    #audioRecorder = AudioRecorder(args.src_directory, args.dest_directory)
-    
+    def build(self, variable):
+        print("Building....")
+        while isRunning:
+            if variable.value == 1:
+                print("recording")
+                time.sleep(1)
+            else:
+                print("NOT recording")
+                time.sleep(1)

@@ -61,3 +61,16 @@ source ~/tensorflow-metal/bin/activate
 ```
 python3 setup_mac_script.py
 ```
+
+
+------------------------------
+
+Sources :
+
+https://superfastpython.com/multiprocessing-pool-configure/
+https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
+https://superfastpython.com/multiprocessing-in-python/
+
+
+
+
