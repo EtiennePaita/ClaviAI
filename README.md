@@ -70,6 +70,8 @@ Sources :
 https://superfastpython.com/multiprocessing-pool-configure/
 https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
 https://superfastpython.com/multiprocessing-in-python/
+https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
+
 
 
 

@@ -5,6 +5,7 @@ import audio_spliter as AudioSpliter
 import spectrum_generator as SpectrumGenerator
 import time
 from multiprocessing import Process, Value
+import ctypes
 
 isRecording = False
 isRunning = True
@@ -77,11 +78,12 @@ class AudioRecorder:
         SpectrumGenerator.generate_spectrograms(self.srcDirectory, spectrum_path)
         SpectrumGenerator.generate_spectrograms(self.destDirectory, spectrum_path)
 
-    def build(self, variable):
+    def build(self, isRecordingValue, responseValue):
         print("Building....")
         while isRunning:
-            if variable.value == 1:
+            if isRecordingValue.value == 1:
                 print("recording")
+                responseValue.value = responseValue.value + "a"
                 time.sleep(1)
             else:
                 print("NOT recording")

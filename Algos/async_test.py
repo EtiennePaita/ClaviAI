@@ -1,4 +1,5 @@
-from multiprocessing import Process, Value
+from multiprocessing import Process, Value, Manager
+import ctypes
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit
 from PyQt5.QtCore import *
@@ -24,10 +25,11 @@ class Alignment(Enum):
 
 class MyWindow(QMainWindow):
 
-   def __init__(self, variable):
+   def __init__(self, isRecordingValue,responseValue):
       super(MyWindow,self).__init__()
+      self.responseValue = responseValue
       self.isRecording = False
-      self.variable = variable
+      self.isRecordingValue = isRecordingValue
       self.initUI()
 
    def startRecording(self):
@@ -35,13 +37,13 @@ class MyWindow(QMainWindow):
       self.recordButton.setText("Stop")
       self.recordButton.adjustSize()
       
-      self.variable.value = 1
+      self.isRecordingValue.value = 1
    def stopRecording(self):
       print("Stop recording audio")
       self.recordButton.setText("Start")
       self.recordButton.adjustSize()
 
-      self.variable.value = 0
+      self.isRecordingValue.value = 0
 
    def onButtonClicked(self):
       if self.isRecording == True:
@@ -82,7 +84,8 @@ class MyWindow(QMainWindow):
       self.setMaximumHeight(WINDOW_HEIGHT)
 
       self.label = QLabel(self)
-      self.label.setText("Texte généré :")
+      self.label.setText("Texte généré : ")
+      #self.label.adjustSize()
       #self.label.setAlignment(Qt.AlignCenter)
       self.label.move(int(WINDOW_WIDTH/2) - int(self.label.frameGeometry().width()/2), int(WINDOW_HEIGHT/2) - int(self.label.frameGeometry().height()/2))
       
@@ -97,29 +100,39 @@ class MyWindow(QMainWindow):
       self.align_object(self.label,Alignment.CENTER)
 
       self.generateTextLabel = QLabel(self)
-      self.generateTextLabel.setText("bl abla bla")
+      self.generateTextLabel.resize(400, 400) 
+      
+      #
+      # TODO : find a way to refresh the screen
+      #
+      self.generateTextLabel.setText(f"{self.responseValue.value}")
+      #
+
       #self.align_object(self.label,Alignment.BOTTOM_CENTER)
       self.generateTextLabel.move(int(WINDOW_WIDTH/2) - int(self.generateTextLabel.frameGeometry().width()/2), WINDOW_HEIGHT - int(self.generateTextLabel.frameGeometry().height()))
 
-def window(variable):
+def window(isRecordingValue, responseValue):
    app = QApplication(sys.argv)
-   win = MyWindow(variable)
+   win = MyWindow(isRecordingValue,responseValue)
    win.show()
    sys.exit(app.exec_())
 
 
 def main():
+   manager = Manager()
    a = AudioRecorder("./", "./")
-   variable = Value('i', 0)
+   isRecordingValue = Value('i', 0)
+   responseValue = manager.Value(ctypes.c_wchar_p, "H")
 
-   appProcess = Process(target=window, args =(variable,))
+   appProcess = Process(target=window, args =(isRecordingValue,responseValue,))
    
-   audioProcess = Process(target=a.build, args =(variable,))
+   audioProcess = Process(target=a.build, args =(isRecordingValue,responseValue,))
    audioProcess.daemon = True               # daemon threads will be destroy when main process ends
    
    audioProcess.start()
    appProcess.start()
-   appProcess.join()                  # join process to wait until it ends
+   appProcess.join()     
+   print(f"{responseValue.value}")             # join process to wait until it ends
     
 
 
