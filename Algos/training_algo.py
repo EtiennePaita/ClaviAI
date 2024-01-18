@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential, load_model
 from tensorflow.python.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from tensorflow.python.keras.utils.np_utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
@@ -19,6 +19,9 @@ if __name__ == "__main__":
     X = data[:, :-1] / 255.0
     y = data[:, -1] 
 
+    unique_classes = np.unique(data[:, -1])
+    print("Classes d'origine:", unique_classes)
+
     # Reshape 2D data for CNN model (nombre d'échantillons, hauteur, largeur, canaux)
 # "-1" car NumPy calcule automatiquement cette dimension en fonction des autres dimensions et de la taille totale des données
     X = X.reshape(y.size,100,100,1)
@@ -36,15 +39,43 @@ if __name__ == "__main__":
 
     # CNN Model
     model = Sequential()
-    model.add(Conv2D(6, (3, 3), activation='relu', input_shape=(100,100,1)))
+    model.add(Conv2D(6, (3, 3), activation='relu', input_shape=(100,100,1))) # 6 filtres de taille 3x3 et spécificat° taille entrée
     model.add(MaxPooling2D((2, 2)))
+
+    model.add(Conv2D(12, (3, 3), input_shape=(100,100,6)))
+    model.add(MaxPooling2D((2, 2))) 
+
     model.add(Flatten(input_shape=(48, 48, 32))) # Transformer les caractéristiques spatiales en un vecteur 1D
     print("Shape after Flatten:", model.output_shape)
-    model.add(Dropout(0.5)) # contrer l’overfitting
+    model.add(Dropout(0.5)) # contrer l’overfitting    //désactive des sorties de neurones aléatoirement évite la co-adaptation
     model.add(Dense(20, activation='relu'))    # couche de 512 neurones
     model.add(Dense(2, activation='softmax'))  # 26 classification pour 26 lettres
 
+    #model = load_model('model_clavier.h5')
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    model.summary()
-    print("----------------FIN-------------------")
-    model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+    #model.summary()
+    print("----------------ENTRAINEMENT-------------------")
+    y_test_classes = np.argmax(y_test, axis=1)
+    y_test_original = label_encoder.inverse_transform(y_test_classes)
+    print(f"Classes réelles : {y_test_original}\n")
+
+    for epoch in range(10):
+        #[0. 1.] représente la classe 0 (Q)
+        #[1. 0.] représente la classe 1 (M)
+        
+        model.fit(X_train, y_train, epochs=1, validation_data=(X_test, y_test))
+
+        y_pred = model.predict(X_test)
+        
+        # Transforme mon tableau de 2 dimensions en 1 tableau de 1 dimension en renvoyant l'indice de la valeur max
+        # par ex: np.argmax([1., 0.]) renvoie 0
+        y_pred_classes = np.argmax(y_pred, axis=1)
+        
+        # Remplace les indices par les valeurs originales(13 et 17)
+        y_pred_original = label_encoder.inverse_transform(y_pred_classes)
+        
+        print(f"Époque {epoch + 1} - Classes prédites : {y_pred_original}")
+    
+    #model.evaluate(X_test, y_test)
+    #model.save('model_clavier.h5')
+    
