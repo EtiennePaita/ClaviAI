@@ -29,4 +29,12 @@ if __name__ == "__main__":
     evaluation_results = loaded_model.evaluate(X_test, y_test)
     print("Perte (Loss):", evaluation_results[0])
     print("Précision (Accuracy):", evaluation_results[1])
+
+    #Prediction pour les 20 premiers exemples de l'ensemble de test
+    predictions = loaded_model.predict(X_test[:20])
+    predicted_classes = np.argmax(predictions, axis=1)
+    true_classes = np.argmax(y_test[:20], axis=1)
+
+    print("Classes réelles:", true_classes)
+    print("Classes prédites:", predicted_classes)
     

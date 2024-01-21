@@ -58,8 +58,8 @@ if __name__ == "__main__":
     print(f"Classes réelles : {y_test_original}\n")
 
     for epoch in range(10):
-        #[0. 1.] représente la classe 0 (Q)
-        #[1. 0.] représente la classe 1 (M)
+        #[1. 0.] représente la classe 0 (M)
+        #[0. 1.] représente la classe 1 (Q)
         
         model.fit(X_train, y_train, epochs=1, validation_data=(X_test, y_test))
 
