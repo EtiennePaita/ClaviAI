@@ -10,7 +10,7 @@ parser.add_argument("src_directory", help="The directory path containing the aud
 parser.add_argument("dest_directory", help="The directory path that will contain the spectograms image files. Make sure to add '/' at the end of the path.")
 args = parser.parse_args()
 
-CSV_FILE_NAME = 'images.csv'
+CSV_FILE_NAME = 'images_test.csv'
 AUDIO_SPLIT_DIRECTORY_NAME = 'AudioSplit'
 IMAGES_DIRECTORY_NAME = 'Images'
 IMG_VALID_EXTENSION = '.png'
