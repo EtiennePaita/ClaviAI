@@ -17,7 +17,10 @@ if __name__ == "__main__":
     data = np.loadtxt(args.src_csv, delimiter=',')
 
     X = data[:, :-1] / 255.0
-    y = data[:, -1]
+    y = data[:, -1] 
+
+    unique_classes = np.unique(data[:, -1])
+    print("Classes d'origine:", unique_classes)
 
     # Reshape 2D data for CNN model (nombre d'échantillons, hauteur, largeur, canaux)
 # "-1" car NumPy calcule automatiquement cette dimension en fonction des autres dimensions et de la taille totale des données
@@ -49,8 +52,25 @@ if __name__ == "__main__":
 
     model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
     #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
     print("----------------ENTRAINEMENT-------------------")
-    model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+    y_test_classes = np.argmax(y_test, axis=1)
+    y_test_original = label_encoder.inverse_transform(y_test_classes)
+    print(f"Classes réelles : {y_test_original}\n")
+
+    for epoch in range(10):
+        #[0. 1.] représente la classe 0 (Q)
+        #[1. 0.] représente la classe 1 (M)
+        
+        model.fit(X_train, y_train, epochs=1, validation_data=(X_test, y_test))
+
+        y_pred = model.predict(X_test)
+        
+        # Transforme mon tableau de 2 dimensions en 1 tableau de 1 dimension en renvoyant l'indice de la valeur max
+        # par ex: np.argmax([1., 0.]) renvoie 0
+        y_pred_classes = np.argmax(y_pred, axis=1)
+        
+        # Remplace les indices par les valeurs originales(13 et 17)
+        y_pred_original = label_encoder.inverse_transform(y_pred_classes)
+        print(f"Époque {epoch + 1} - Classes prédites : {y_pred_original}")
     
     model.save('model_clavier.keras')
