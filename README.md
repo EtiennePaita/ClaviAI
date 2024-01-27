@@ -71,6 +71,8 @@ https://superfastpython.com/multiprocessing-pool-configure/
 https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
 https://superfastpython.com/multiprocessing-in-python/
 https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
+https://stackoverflow.com/questions/51885246/callback-on-variable-change-in-python
+https://stackoverflow.com/questions/26499548/accessing-an-attribute-of-a-multiprocessing-proxy-of-a-class
 
 
 
