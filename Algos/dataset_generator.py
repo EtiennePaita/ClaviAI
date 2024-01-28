@@ -47,12 +47,12 @@ def generate_dataset(
             f.write(line)
     f.close()    
 
-if __name__ == "__main__":
-    
+def process_audio_files(src_directory, dest_directory):
     # Creation of required directories
-    dataPath = os.path.join(args.dest_directory, "Data") 
+    dataPath = os.path.join(dest_directory, "Data") 
     audioSplitPath = os.path.join(dataPath, AUDIO_SPLIT_DIRECTORY_NAME) 
     imagesPath = os.path.join(dataPath, IMAGES_DIRECTORY_NAME) 
+    
     try:
         os.mkdir(dataPath)
         print("dataPath created")
@@ -72,12 +72,16 @@ if __name__ == "__main__":
     except FileExistsError:
         print("imagesPath already created")
 
-
     # Split src_directory's audio files (if multiple press)
-    AudioSpliter.split_all(args.src_directory, audioSplitPath)
+    AudioSpliter.split_all(src_directory, audioSplitPath)
 
     # First step : generate the spectrogram of audio data
     SpectrumGenerator.generate_spectrograms(audioSplitPath, imagesPath)
 
     # Second step : generate the csv dataset of the images
-    generate_dataset(imagesPath, dataPath)
+    generate_dataset(imagesPath, dataPath)    
+
+    return CSV_FILE_NAME
+
+if __name__ == "__main__":
+    process_audio_files(args.src_directory, args.dest_directory)
