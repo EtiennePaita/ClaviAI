@@ -5,10 +5,10 @@ import spectrum_generator as SpectrumGenerator
 import argparse
 
 # Add arguments to the script
-parser = argparse.ArgumentParser(description='A program to generate a csv dataset based on audio files.')
-parser.add_argument("src_directory", help="The directory path containing the audio files. Make sure to add '/' at the end of the path.")
-parser.add_argument("dest_directory", help="The directory path that will contain the spectograms image files. Make sure to add '/' at the end of the path.")
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description='A program to generate a csv dataset based on audio files.')
+# parser.add_argument("src_directory", help="The directory path containing the audio files. Make sure to add '/' at the end of the path.")
+# parser.add_argument("dest_directory", help="The directory path that will contain the spectograms image files. Make sure to add '/' at the end of the path.")
+# args = parser.parse_args()
 
 CSV_FILE_NAME = 'images.csv'
 AUDIO_SPLIT_DIRECTORY_NAME = 'AudioSplit'
@@ -28,7 +28,8 @@ def convert_letter_to_ascii_result(letter):
 # This function generate the .csv dataset with the spectrograms created
 def generate_dataset(
     images_directory_path: str,
-    data_directory_path: str
+    data_directory_path: str,
+    random_generation: bool
 ):
     print("Generating dataset ...")
     files = os.listdir(images_directory_path)
@@ -43,11 +44,16 @@ def generate_dataset(
             letter = infos[0]
             print(f"letter : {letter}")
             line = img.flatten()
-            line = ', '.join(map(str, line)) + f', {convert_letter_to_ascii_result(letter)}\n'
+
+            if random_generation:
+                line = ', '.join(map(str, line)) + f", {ord('_')}\n"
+            else:
+                line = ', '.join(map(str, line)) + f', {convert_letter_to_ascii_result(letter)}\n'
+            
             f.write(line)
     f.close()    
 
-def process_audio_files(src_directory, dest_directory):
+def process_audio_files(src_directory, dest_directory, random_generation: bool = False):
     # Creation of required directories
     dataPath = os.path.join(dest_directory, "Data") 
     audioSplitPath = os.path.join(dataPath, AUDIO_SPLIT_DIRECTORY_NAME) 
@@ -79,9 +85,9 @@ def process_audio_files(src_directory, dest_directory):
     SpectrumGenerator.generate_spectrograms(audioSplitPath, imagesPath)
 
     # Second step : generate the csv dataset of the images
-    generate_dataset(imagesPath, dataPath)    
+    generate_dataset(imagesPath, dataPath, random_generation)    
 
     return CSV_FILE_NAME
 
-if __name__ == "__main__":
-    process_audio_files(args.src_directory, args.dest_directory)
+# if __name__ == "__main__":
+#     process_audio_files(args.src_directory, args.dest_directory)
