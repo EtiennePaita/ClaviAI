@@ -8,15 +8,24 @@ from multiprocessing import Process, Value
 import ctypes
 
 
+#   TODO : 
+#       - call createEnv() only on record()
+#       - delete Output folder at each record()
+#       - save outputs and global specters in Cache folder
+#
+
+
 class AudioRecorder:
     
     def __init__(self, dest_directory):
         self.destDirectory = dest_directory
         self.outputFolderPath = os.path.join(dest_directory, "Outputs")
+        self.cacheFolderPath = os.path.join(dest_directory, "Cache")
         self.rtAudioFolderPath = os.path.join(self.outputFolderPath, "RTAudios")
         self.spectrum_path = os.path.join(self.outputFolderPath, "Spectrums") 
 
         self.createEnv()
+        
 
     def createEnv(self):
         # Create Output folder
@@ -27,6 +36,13 @@ class AudioRecorder:
             # TODO : Delete folder and all files inside
             print("Output folder already created")
 
+        # Create Cache folder to save an history
+        try:
+            os.mkdir(self.cacheFolderPath)
+            print("Cache folder created")
+        except FileExistsError:
+            print("Cache folder already created")
+
         # Create RTAudios & Spectrums folders inside of Output folder
         try:
             os.mkdir(self.rtAudioFolderPath)
@@ -34,6 +50,10 @@ class AudioRecorder:
             print("Folders created")
         except FileExistsError:
             print("Folders seems to be already created")
+
+    def getCachedFilename(self):
+        files = os.listdir(self.cacheFolderPath)
+        return f"output_{files.size}.wav"
 
     def record(self):
         # self.createEnv()
