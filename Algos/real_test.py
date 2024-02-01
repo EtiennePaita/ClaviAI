@@ -39,5 +39,5 @@ if __name__ == "__main__":
     predictions = np.argmax(predictions, axis=1)    #prend l'indice de la plus grande valeur => enleve les pourcentages de
                                                     # chaque classe
 
-    # classe 0 => M / classe 1 => Q
+    # classe 0 => A / classe 1 => B ...
     print(predictions)

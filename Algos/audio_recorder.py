@@ -142,6 +142,7 @@ class AudioRecorder:
                 try:
                     prediction = self.record()
                     print(f"************ Prediction result : ->{prediction}")
-                    responseValue.value = responseValue.value + self.convertToString(prediction)
+                    responseValue.value = prediction
+                    #responseValue.value + self.convertToString(prediction)
                 except Exception as e:
                     print(f"Exception value: {e}")
