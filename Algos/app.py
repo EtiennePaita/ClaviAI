@@ -9,8 +9,8 @@ from audio_recorder import AudioRecorder
 import sys
 from enum import Enum
 
-WINDOW_HEIGHT = 500
-WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 1500 #500
+WINDOW_WIDTH = 1500 #800
 
 class Alignment(Enum):
    TOP_START = 1

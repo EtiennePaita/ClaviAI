@@ -45,7 +45,7 @@ if __name__ == "__main__":
     #print("Shape after Flatten:", model.output_shape)
     model.add(Dropout(0.5)) # contrer l’overfitting    //désactive des sorties de neurones aléatoirement évite la co-adaptation
     model.add(Dense(20, activation='relu'))    # couche de 512 neurones
-    model.add(Dense(2, activation='softmax'))  # 26 classification pour 26 lettres
+    model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
     model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
     #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])

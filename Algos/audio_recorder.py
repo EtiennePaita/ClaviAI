@@ -23,7 +23,7 @@ class AudioRecorder:
     def __init__(self, dest_directory):
         self.destDirectory = dest_directory
         self.outputFolderPath = os.path.join(dest_directory, "Outputs")
-        self.model_path = os.path.join(dest_directory, "Algos/model_clavier.keras")
+        self.model_path = os.path.join(dest_directory, "model_clavier.keras") #"Algos/model_clavier.keras"
         print(self.model_path)
         self.cacheFolderPath = os.path.join(dest_directory, "Cache")
         self.rtAudioFolderPath = os.path.join(self.outputFolderPath, "RTAudios")
@@ -143,5 +143,5 @@ class AudioRecorder:
                     prediction = self.record()
                     print(f"************ Prediction result : ->{prediction}")
                     responseValue.value = responseValue.value + self.convertToString(prediction)
-                except Exception:
-                    print("Error on prediction")
+                except Exception as e:
+                    print(f"Exception value: {e}")
