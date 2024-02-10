@@ -5,11 +5,9 @@ import audio_spliter as AudioSpliter
 import spectrum_generator as SpectrumGenerator
 import real_test as RealTest
 import time
-from multiprocessing import Process, Value
 import ctypes
-
 import numpy as np
-
+from multiprocessing import Process, Value
 
 #   TODO : 
 #       - call createEnv() only on record()
@@ -72,14 +70,15 @@ class AudioRecorder:
         return f"output_{files.size}.wav"
 
     def getLetter(self, value):
-        if(value == 0): return 'M' 
-        else: return 'Q'
+        if 0 <= value < 26:
+            return chr(ord('A') + value)
+        else:
+            return 'Invalid Value'
 
     def convertToString(self, tab):
         res = ""
         for letter in tab:
             res += self.getLetter(letter)
-
         return res
 
     def record(self):
@@ -141,7 +140,7 @@ class AudioRecorder:
                 try:
                     prediction = self.record()
                     print(f"************ Prediction result : ->{prediction}")
-                    responseValue.value = prediction
-                    #responseValue.value + self.convertToString(prediction)
+                    #responseValue.value = prediction
+                    responseValue.value = responseValue.value + self.convertToString(prediction)
                 except Exception as e:
                     print(f"Exception value: {e}")

@@ -30,7 +30,7 @@ if __name__ == "__main__":
     y = label_encoder.fit_transform(y)  # Transformer labels en valeur numeric
     y = to_categorical(y)   # Converti en vecteur binaire
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5) #random => garantit la reproductibilité des résultats  random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4) #random => garantit la reproductibilité des résultats  random_state=42
 
     # CNN Model
     model = Sequential()
@@ -45,8 +45,8 @@ if __name__ == "__main__":
     model.add(Dense(20, activation='relu'))    # couche de 512 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
-    model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
-    #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    #model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     print("----------------ENTRAINEMENT-------------------")
     model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
