@@ -1,11 +1,14 @@
+import argparse
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-import argparse
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+
 
 # Add arguments to the script
 parser = argparse.ArgumentParser(description='A program to train the AI.')
@@ -20,7 +23,6 @@ if __name__ == "__main__":
     y = data[:, -1]
 
     # Reshape 2D data for CNN model (nombre d'échantillons, hauteur, largeur, canaux)
-# "-1" car NumPy calcule automatiquement cette dimension en fonction des autres dimensions et de la taille totale des données
     X = X.reshape(y.size,100,100,1)
 
     # Encode labels
@@ -28,10 +30,7 @@ if __name__ == "__main__":
     y = label_encoder.fit_transform(y)  # Transformer labels en valeur numeric
     y = to_categorical(y)   # Converti en vecteur binaire
 
-    #print("Shape of X before split:", X.shape)
-    #print("Shape of y before split:", y.shape)
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4) #random => garantit la reproductibilité des résultats  random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5) #random => garantit la reproductibilité des résultats  random_state=42
 
     # CNN Model
     model = Sequential()
@@ -42,7 +41,6 @@ if __name__ == "__main__":
     model.add(MaxPooling2D((2, 2))) 
 
     model.add(Flatten(input_shape=(48, 48, 32))) # Transformer les caractéristiques spatiales en un vecteur 1D
-    #print("Shape after Flatten:", model.output_shape)
     model.add(Dropout(0.5)) # contrer l’overfitting    //désactive des sorties de neurones aléatoirement évite la co-adaptation
     model.add(Dense(20, activation='relu'))    # couche de 512 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
@@ -52,5 +50,20 @@ if __name__ == "__main__":
 
     print("----------------ENTRAINEMENT-------------------")
     model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+
+    #model.save('model_clavier.keras')
+
+    y_pred = model.predict(X_test)
+    y_pred_classes = np.argmax(y_pred, axis=1)
+    y_test_classes = np.argmax(y_test, axis=1)
+
+    cm = confusion_matrix(y_test_classes, y_pred_classes)
+    color = 'white'
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot()
+    plt.show()
+
+
+
     
-    model.save('model_clavier.keras')
+
