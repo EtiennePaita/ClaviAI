@@ -3,7 +3,6 @@ import audio_spliter as AudioSpliter
 import librosa
 import matplotlib.pyplot as plt
 
-
 # This function generate the spectrogram of all audio file in audio_split_directory_path directory into images_directory_path directory
 def generate_spectrograms(
     audio_split_directory_path: str,
@@ -27,4 +26,3 @@ def generate_spectrograms(
             name = infos[0]
             imagePath = os.path.join(images_directory_path, f"{name}.png") 
             plt.savefig(imagePath) # Save spectrogram image in imagePath
-                 

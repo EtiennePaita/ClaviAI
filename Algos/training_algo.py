@@ -38,18 +38,18 @@ if __name__ == "__main__":
     model.add(MaxPooling2D((2, 2)))
 
     model.add(Conv2D(12, (3, 3), input_shape=(100,100,6)))
-    model.add(MaxPooling2D((2, 2))) 
+    model.add(MaxPooling2D((2, 2)))
 
     model.add(Flatten(input_shape=(48, 48, 32))) # Transformer les caractéristiques spatiales en un vecteur 1D
     model.add(Dropout(0.5)) # contrer l’overfitting    //désactive des sorties de neurones aléatoirement évite la co-adaptation
-    model.add(Dense(20, activation='relu'))    # couche de 512 neurones
+    model.add(Dense(20, activation='relu'))    # couche de 20 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
     #model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     print("----------------ENTRAINEMENT-------------------")
-    model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+    model.fit(X_train, y_train, epochs=5, validation_data=(X_test, y_test))
 
     #model.save('model_clavier.keras')
 

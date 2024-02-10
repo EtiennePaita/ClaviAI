@@ -31,8 +31,6 @@ def predict_letter(model_path, src_directory):
     return predictions
 
 if __name__ == "__main__":
-    # Spécifiez le chemin du fichier audio que vous souhaitez prédire
-    audio_file_path = "chemin/vers/votre/fichier/audio.m4a"
     model_path = "model_clavier.keras"
 
     predictions = predict_letter(model_path, args.src_directory)

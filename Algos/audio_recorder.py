@@ -1,13 +1,8 @@
 import pyaudio
 import wave
 import os, shutil
-import audio_spliter as AudioSpliter
-import spectrum_generator as SpectrumGenerator
 import real_test as RealTest
-import time
-import ctypes
 import numpy as np
-from multiprocessing import Process, Value
 
 #   TODO : 
 #       - call createEnv() only on record()
@@ -128,9 +123,6 @@ class AudioRecorder:
         print(f"--------------------======== Predictions result : ->{predictions}")
         predict = np.argmax(predictions, axis=1)
         return predict
-        # AudioSpliter.split_all(self.outputFolderPath, self.rtAudioFolderPath)
-        # SpectrumGenerator.generate_spectrograms(self.outputFolderPath, self.spectrum_path)
-        # SpectrumGenerator.generate_spectrograms(self.rtAudioFolderPath, self.spectrum_path)
 
     def build(self, isRecordingValue, responseValue):
         print("Building....")

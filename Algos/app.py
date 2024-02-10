@@ -1,6 +1,5 @@
 from multiprocessing import Process, Manager
 import ctypes
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
