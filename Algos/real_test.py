@@ -13,10 +13,8 @@ args = parser.parse_args()
 # Ajouter l'audio path
 def predict_letter(model_path, src_directory):
     csv_file = DatasetGenerator.process_audio_files(src_directory, src_directory, True)
-    print(csv_file)
     csvPath = os.path.join(src_directory, "Data")
     csvPath = os.path.join(csvPath, csv_file) 
-    print(csvPath)
 
     data = np.loadtxt(csvPath, delimiter=',')
     if data.ndim == 1:

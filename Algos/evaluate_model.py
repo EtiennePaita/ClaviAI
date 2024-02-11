@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.8)
 
-    loaded_model = load_model("model_clavier.keras") 
+    loaded_model = load_model("model_clavier2.keras") 
     evaluation_results = loaded_model.evaluate(X_test, y_test)
     print("Perte (Loss):", evaluation_results[0])
     print("Précision (Accuracy):", evaluation_results[1])

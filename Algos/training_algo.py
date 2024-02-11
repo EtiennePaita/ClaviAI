@@ -2,13 +2,13 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
-
 
 # Add arguments to the script
 parser = argparse.ArgumentParser(description='A program to train the AI.')
@@ -34,25 +34,43 @@ if __name__ == "__main__":
 
     # CNN Model
     model = Sequential()
-    model.add(Conv2D(6, (3, 3), activation='relu', input_shape=(100,100,1))) # 6 filtres de taille 3x3 et spécificat° taille entrée
+    model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(100,100,1))) # 6 filtres de taille 3x3 et spécificat° taille entrée
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
 
     model.add(Conv2D(12, (3, 3), input_shape=(100,100,6)))
+    model.add(BatchNormalization())     # normaliser les données - accélère la durée d'entrainement en augmenttant le learning rate
     model.add(MaxPooling2D((2, 2)))
 
-    model.add(Flatten(input_shape=(48, 48, 32))) # Transformer les caractéristiques spatiales en un vecteur 1D
+    model.add(Flatten()) # Transformer les caractéristiques spatiales en un vecteur 1D
     model.add(Dropout(0.5)) # contrer l’overfitting    //désactive des sorties de neurones aléatoirement évite la co-adaptation
-    model.add(Dense(20, activation='relu'))    # couche de 20 neurones
+    model.add(Dense(20, activation='relu'))    # couche de 60 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
     #model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     print("----------------ENTRAINEMENT-------------------")
-    model.fit(X_train, y_train, epochs=5, validation_data=(X_test, y_test))
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
+    history = model.fit(X_train, y_train, epochs=15, validation_data=(X_test, y_test), verbose = 0, callbacks=[early_stop])
 
     #model.save('model_clavier.keras')
 
+
+    #Courbe d'apprentissage
+    """
+    training_accuracy = history.history['accuracy']
+    validation_accuracy = history.history['val_accuracy']
+    plt.plot(training_accuracy, label='Training')
+    plt.plot(validation_accuracy, label='Validation')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
+    """
+
+    #Matrice de confusion
+    """
     y_pred = model.predict(X_test)
     y_pred_classes = np.argmax(y_pred, axis=1)
     y_test_classes = np.argmax(y_test, axis=1)
@@ -62,8 +80,4 @@ if __name__ == "__main__":
     disp = ConfusionMatrixDisplay(confusion_matrix=cm)
     disp.plot()
     plt.show()
-
-
-
-    
-
+    """
