@@ -47,12 +47,12 @@ if __name__ == "__main__":
     model.add(Dense(20, activation='relu'))    # couche de 60 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
-    #model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
+    #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     print("----------------ENTRAINEMENT-------------------")
-    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
-    history = model.fit(X_train, y_train, epochs=15, validation_data=(X_test, y_test), verbose = 0, callbacks=[early_stop])
+    #early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
+    history = model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test), verbose = 0)
 
     #model.save('model_clavier.keras')
 
