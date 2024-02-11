@@ -2,6 +2,7 @@ from skimage import io
 import os
 import audio_spliter as AudioSpliter
 import spectrum_generator as SpectrumGenerator
+import noise_reductor as NoiseReductor
 import argparse
 
 # Add arguments to the script
@@ -12,12 +13,15 @@ import argparse
 
 CSV_FILE_NAME = 'images.csv'
 AUDIO_SPLIT_DIRECTORY_NAME = 'AudioSplit'
+AUDIO_PROCESSED_DIRECTORY_NAME = 'AudioProcessed'
 IMAGES_DIRECTORY_NAME = 'Images'
 IMG_VALID_EXTENSION = '.png'
+ORIGINAL_DIRECTORY = 'original'
+REDUCED_DIRECTORY = 'reduced'
 
 # This function convert an alphabet char to ascii normalized value (0-25)
 def convert_letter_to_ascii_result(letter):
-    ascii = ord(letter)
+    ascii = ord(letter[0])
     if ascii >= ord('a') and ascii <= ord('z'):
         return ascii - ord('a') + 1
     if ascii >= ord('A') and ascii <= ord('Z'):
@@ -56,8 +60,13 @@ def generate_dataset(
 def process_audio_files(src_directory, dest_directory, random_generation: bool = False):
     # Creation of required directories
     dataPath = os.path.join(dest_directory, "Data") 
+    audioProcessedPath = os.path.join(dataPath, AUDIO_PROCESSED_DIRECTORY_NAME) 
     audioSplitPath = os.path.join(dataPath, AUDIO_SPLIT_DIRECTORY_NAME) 
+    audioSplitOriginalPath = os.path.join(audioSplitPath, ORIGINAL_DIRECTORY) 
+    audioSplitReducedPath = os.path.join(audioSplitPath, REDUCED_DIRECTORY) 
     imagesPath = os.path.join(dataPath, IMAGES_DIRECTORY_NAME) 
+    imagesOriginalPath = os.path.join(imagesPath, ORIGINAL_DIRECTORY) 
+    imagesReducedPath = os.path.join(imagesPath, REDUCED_DIRECTORY) 
     
     try:
         os.mkdir(dataPath)
@@ -66,6 +75,14 @@ def process_audio_files(src_directory, dest_directory, random_generation: bool =
         # Should delete --force dataPath and recreate it
         print("dataPath already created")
 
+
+    try:
+        os.mkdir(audioProcessedPath) 
+        print("audioSplitPath created")
+    except FileExistsError:
+        print("audioSplitPath already created")
+
+
     try:
         os.mkdir(audioSplitPath) 
         print("audioSplitPath created")
@@ -73,19 +90,51 @@ def process_audio_files(src_directory, dest_directory, random_generation: bool =
         print("audioSplitPath already created")
 
     try:
+        os.mkdir(audioSplitOriginalPath) 
+        print("audioSplitOriginalPath created")
+    except FileExistsError:
+        print("audioSplitOriginalPath already created")
+    
+    try:
+        os.mkdir(audioSplitReducedPath) 
+        print("audioSplitReducedPath created")
+    except FileExistsError:
+        print("audioSplitReducedPath already created")
+
+
+
+    try:
         os.mkdir(imagesPath)
         print("imagesPath created")
     except FileExistsError:
         print("imagesPath already created")
 
+    try:
+        os.mkdir(imagesOriginalPath)
+        print("imagesOriginalPath created")
+    except FileExistsError:
+        print("imagesOriginalPath already created")
+
+    try:
+        os.mkdir(imagesReducedPath)
+        print("imagesReducedPath created")
+    except FileExistsError:
+        print("imagesReducedPath already created")
+
+
+    # Reduce noise of audios
+    NoiseReductor.reduce_noise(src_directory, audioProcessedPath)
+
     # Split src_directory's audio files (if multiple press)
-    AudioSpliter.split_all(src_directory, audioSplitPath)
+    AudioSpliter.split_all(src_directory, audioSplitOriginalPath)
+    AudioSpliter.split_all(audioProcessedPath, audioSplitReducedPath)
 
     # First step : generate the spectrogram of audio data
-    SpectrumGenerator.generate_spectrograms(audioSplitPath, imagesPath)
+    SpectrumGenerator.generate_spectrograms(audioSplitOriginalPath, imagesOriginalPath)
+    SpectrumGenerator.generate_spectrograms(audioSplitReducedPath, imagesReducedPath)
 
     # Second step : generate the csv dataset of the images
-    generate_dataset(imagesPath, dataPath, random_generation)    
+    generate_dataset(imagesReducedPath, dataPath, random_generation)    
 
     return CSV_FILE_NAME
 

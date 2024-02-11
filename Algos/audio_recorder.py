@@ -72,8 +72,11 @@ class AudioRecorder:
         return f"output_{files.size}.wav"
 
     def getLetter(self, value):
-        if(value == 0): return 'M' 
-        else: return 'Q'
+        if 0 <= value < 26:
+            return chr(ord('A') + value)
+        else:
+            return 'Invalid Value'
+
 
     def convertToString(self, tab):
         res = ""
@@ -140,8 +143,9 @@ class AudioRecorder:
                 print("recording")
                 try:
                     prediction = self.record()
-                    print(f"************ Prediction result : ->{prediction}")
-                    responseValue.value = prediction
-                    #responseValue.value + self.convertToString(prediction)
+                    letters = self.convertToString(prediction)
+                    print(f"************ Prediction result : ->{letters}")
+                    #responseValue.value = prediction
+                    responseValue.value += letters
                 except Exception as e:
                     print(f"Exception value: {e}")

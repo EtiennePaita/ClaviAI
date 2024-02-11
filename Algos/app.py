@@ -9,8 +9,8 @@ from audio_recorder import AudioRecorder
 import sys
 from enum import Enum
 
-WINDOW_HEIGHT = 1500 #500
-WINDOW_WIDTH = 1500 #800
+WINDOW_HEIGHT = 500
+WINDOW_WIDTH = 800
 
 class Alignment(Enum):
    TOP_START = 1
@@ -144,7 +144,7 @@ def main():
    manager = Manager()
 
    # initialisation variables partagées
-   responseValue = manager.Value(ctypes.c_wchar_p, "Test")
+   responseValue = manager.Value(ctypes.c_wchar_p, "")
    isRecordingValue = manager.Value('i', 0)
 
    # instancie Audiorecorder
