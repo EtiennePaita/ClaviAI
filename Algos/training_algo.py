@@ -101,4 +101,4 @@ def first_fit(model_path, csv_path):
 
 # Implement Neurones
 # if __name__ == "__main__":
-#     first_fit('model_clavier2.keras', args.src_csv)
+#     first_fit('model_clavier.keras', args.src_csv)

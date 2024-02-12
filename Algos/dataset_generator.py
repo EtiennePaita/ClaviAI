@@ -21,7 +21,7 @@ REDUCED_DIRECTORY = 'reduced'
 
 # This function convert an alphabet char to ascii normalized value (0-25)
 def convert_letter_to_ascii_result(letter):
-    ascii = ord(letter)
+    ascii = ord(letter[0])
     if ascii >= ord('a') and ascii <= ord('z'):
         return ascii - ord('a') + 1
     if ascii >= ord('A') and ascii <= ord('Z'):
