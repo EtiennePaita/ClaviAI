@@ -3,3 +3,4 @@ Data/
 Data2/
 Outputs/
 Cache/
+*/*.keras
