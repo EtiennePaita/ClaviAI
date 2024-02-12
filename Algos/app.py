@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from audio_recorder import AudioRecorder
 import sys
 from enum import Enum
+from Screens.add_audio_window import AddAudioWindow
 
 WINDOW_HEIGHT = 500
 WINDOW_WIDTH = 800
@@ -119,10 +120,8 @@ class MyWindow(QMainWindow):
 
       self.recordButton = QPushButton(self)
       self.recordButton.setText("Start")
-
       self.recordButton.setAttribute(Qt.WA_StyledBackground, True)
       self.recordButton.setStyleSheet('color: white; background-color: #73C371;')
-
       self.recordButton.adjustSize()
       #self.recordButton.move(int(WINDOW_WIDTH/2) - (self.recordButton.frameGeometry().width()/2), int(WINDOW_HEIGHT - self.recordButton.frameGeometry().height()))
       self.recordButton.clicked.connect(self.onButtonClicked)
@@ -137,6 +136,20 @@ class MyWindow(QMainWindow):
 
       #self.align_object(self.label,Alignment.BOTTOM_CENTER)
       self.generateTextLabel.move(int(WINDOW_WIDTH/2) - int(self.generateTextLabel.frameGeometry().width()/2), WINDOW_HEIGHT - int(self.generateTextLabel.frameGeometry().height()))
+      
+      self.updateButton = QPushButton("Update Dataset", self)
+      self.updateButton.adjustSize()
+      self.updateButton.move(WINDOW_WIDTH - self.updateButton.frameGeometry().width() - 10, 10)
+      self.updateButton.clicked.connect(self.goToAddAudioWindow)
+   
+   def goToAddAudioWindow(self):
+      self.w = AddAudioWindow("./")
+      self.w.show()
+      #self.hide()
+      
+
+
+
 
 
 def windowProc(isRecordingValue,responseValue):
