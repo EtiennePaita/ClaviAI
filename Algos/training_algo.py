@@ -15,9 +15,27 @@ parser = argparse.ArgumentParser(description='A program to train the AI.')
 parser.add_argument("src_csv", help="The .csv dataset path.")
 args = parser.parse_args()
 
-# Implement Neurones
-if __name__ == "__main__":
-    data = np.loadtxt(args.src_csv, delimiter=',')
+def fit_model(model_path, csv_path):
+    data = np.loadtxt(csv_path, delimiter=',')
+    X = data[:, :-1] / 255.0
+    y = data[:, -1]
+    X = X.reshape(y.size,100,100,1)
+
+    label_encoder = LabelEncoder()
+    y = label_encoder.fit_transform(y)
+    y = to_categorical(y)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+
+    model = load_model(model_path)   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
+    print("----------------ENTRAINEMENT-------------------")
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
+    model.fit(X_train, y_train, epochs=60, validation_data=(X_test, y_test), verbose=0, callbacks=[early_stop])
+
+    model.save(model_path)
+
+def first_fit(model_path, csv_path):
+    data = np.loadtxt(csv_path, delimiter=',')
 
     X = data[:, :-1] / 255.0
     y = data[:, -1]
@@ -30,7 +48,7 @@ if __name__ == "__main__":
     y = label_encoder.fit_transform(y)  # Transformer labels en valeur numeric
     y = to_categorical(y)   # Converti en vecteur binaire
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4) #random => garantit la reproductibilité des résultats  random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
     # CNN Model
     model = Sequential()
@@ -38,7 +56,7 @@ if __name__ == "__main__":
     model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
 
-    model.add(Conv2D(12, (3, 3), input_shape=(100,100,6)))
+    model.add(Conv2D(12, (3, 3), activation='relu', input_shape=(100,100,6)))
     model.add(BatchNormalization())     # normaliser les données - accélère la durée d'entrainement en augmenttant le learning rate
     model.add(MaxPooling2D((2, 2)))
 
@@ -47,15 +65,13 @@ if __name__ == "__main__":
     model.add(Dense(20, activation='relu'))    # couche de 60 neurones
     model.add(Dense(26, activation='softmax'))  # 26 classification pour 26 lettres
 
-    model = load_model("model_clavier.keras")   #inclut déjà les infos sur compil du modèle (optimizer,fonction perte, metric)
-    #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     print("----------------ENTRAINEMENT-------------------")
-    #early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
-    history = model.fit(X_train, y_train, epochs=110, validation_data=(X_test, y_test), verbose = 0)
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)   #Arret précoce pour éviter le surapprentissage
+    history = model.fit(X_train, y_train, epochs=60, validation_data=(X_test, y_test), callbacks=[early_stop])
 
-    #model.save('model_clavier.keras')
-
+    model.save(model_path)
 
     #Courbe d'apprentissage
     """
@@ -81,3 +97,8 @@ if __name__ == "__main__":
     disp.plot()
     plt.show()
     """
+
+
+# Implement Neurones
+if __name__ == "__main__":
+    first_fit('model_clavier2.keras', args.src_csv)
