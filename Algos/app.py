@@ -84,9 +84,17 @@ class MyWindow(QMainWindow):
          qobject.move(0, int(WINDOW_HEIGHT/2) - int(qobject.frameGeometry().height()/2))
       elif alignment == Alignment.CENTER:
          qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), int(WINDOW_HEIGHT/2) - int(qobject.frameGeometry().height()/2))
+      
+   def returnString(self, steps = 30): 
+      v = self.responseValue.value
+      occ = int(len(v) / steps)
+      x = [txt[0 + (steps*i): steps + (steps*i)] for i in range(occ) ]
+   
 
    def updateUI(self):
+      
       self.generateTextLabel.setText(f"{self.responseValue.value}")
+      self.generateTextLabel.adjustSize()
 
    def initUI(self):
       self.setGeometry(500,300,WINDOW_WIDTH,WINDOW_HEIGHT)
@@ -120,8 +128,8 @@ class MyWindow(QMainWindow):
       self.align_object(self.recordButton,Alignment.TOP_START)
 
       self.generateTextLabel = QLabel(self)
-      self.generateTextLabel.setAlignment(Qt.AlignCenter)
-      self.generateTextLabel.resize(400, 400) 
+      self.generateTextLabel.resize(300, 100) 
+      self.align_object(self.generateTextLabel,Alignment.BOTTOM_CENTER)
       
       self.generateTextLabel.setText(f"{self.responseValue.value}")
 
