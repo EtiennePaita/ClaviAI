@@ -13,10 +13,8 @@ import dataset_generator as DatasetGenerator
 # Ajouter l'audio path
 def predict_letter(model_path, src_directory):
     csv_file = DatasetGenerator.process_audio_files(src_directory, src_directory, True)
-    print(csv_file)
     csvPath = os.path.join(src_directory, "Data")
     csvPath = os.path.join(csvPath, csv_file) 
-    print(csvPath)
 
     data = np.loadtxt(csvPath, delimiter=',')
     if data.ndim == 1:
@@ -30,10 +28,10 @@ def predict_letter(model_path, src_directory):
 
     return predictions
 
-# if __name__ == "__main__":
-#     # Spécifiez le chemin du fichier audio que vous souhaitez prédire
-#     audio_file_path = "chemin/vers/votre/fichier/audio.m4a"
-#     model_path = "model_clavier.keras"
+#if __name__ == "__main__":
+    # Spécifiez le chemin du fichier audio que vous souhaitez prédire
+    #audio_file_path = "chemin/vers/votre/fichier/audio.m4a"
+    #model_path = "model_clavier.keras"
 
 #     predictions = predict_letter(model_path, args.src_directory)
 #     predictions = np.argmax(predictions, axis=1)    #prend l'indice de la plus grande valeur => enleve les pourcentages de

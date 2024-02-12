@@ -1,6 +1,5 @@
 from multiprocessing import Process, Manager
 import ctypes
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -108,12 +107,14 @@ class MyWindow(QMainWindow):
       self.label = QLabel(self)
       self.label.setText("Texte généré : ")
       self.label.adjustSize()
+      self.label.setStyleSheet('color: white;')
       #self.label.setAlignment(Qt.AlignCenter)
       self.label.move(int(WINDOW_WIDTH/2) - int(self.label.frameGeometry().width()/2), int(WINDOW_HEIGHT/2) - int(self.label.frameGeometry().height()/2))
       #self.align_object(self.label,Alignment.CENTER)
 
       self.editText = QLineEdit(self)
       self.align_object(self.editText,Alignment.TOP_CENTER)
+      self.editText.setStyleSheet('color: white;') 
       #self.align_object(self.label, Alignment.CENTER)
 
       self.recordButton = QPushButton(self)
@@ -129,6 +130,7 @@ class MyWindow(QMainWindow):
 
       self.generateTextLabel = QLabel(self)
       self.generateTextLabel.resize(300, 100) 
+      self.generateTextLabel.setStyleSheet('color: white;')
       self.align_object(self.generateTextLabel,Alignment.BOTTOM_CENTER)
       
       self.generateTextLabel.setText(f"{self.responseValue.value}")
