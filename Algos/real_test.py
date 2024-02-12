@@ -3,12 +3,11 @@ import argparse
 import os
 from tensorflow.keras.models import load_model
 import dataset_generator as DatasetGenerator
+import training_algo as TrainingAlgo
 
-# parser = argparse.ArgumentParser(description='A program to generate a csv dataset based on audio files.')
-# parser.add_argument("src_directory", help="The directory path containing the audio files. Make sure to add '/' at the end of the path.")
-# parser.add_argument("dest_directory", help="The directory path that will contain the spectograms image files. Make sure to add '/' at the end of the path.")
-# args = parser.parse_args()
-
+parser = argparse.ArgumentParser(description='A program to generate a csv dataset based on audio files.')
+parser.add_argument("src_directory", help="The directory path containing the audio files. Make sure to add '/' at the end of the path.")
+args = parser.parse_args()
 
 # Ajouter l'audio path
 def predict_letter(model_path, src_directory):
@@ -27,6 +26,16 @@ def predict_letter(model_path, src_directory):
     predictions = model.predict(X)
 
     return predictions
+
+def upload_audio(model_path, upload_directory):
+    csv_file = DatasetGenerator.process_audio_files(upload_directory, upload_directory)
+    csvPath = os.path.join(upload_directory, "Data")
+    csvPath = os.path.join(csvPath, csv_file) 
+
+    TrainingAlgo.fit_model(model_path, csvPath)
+
+if __name__ == "__main__":
+    upload_audio("model_clavier2.keras", args.src_directory)
 
 #if __name__ == "__main__":
     # Spécifiez le chemin du fichier audio que vous souhaitez prédire
