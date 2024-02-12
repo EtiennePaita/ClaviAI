@@ -4,7 +4,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from enum import Enum
 from simple_audio_recorder import SimpleAudioRecorder
-
+import real_test as RealTest
+import shutil
+from datetime import datetime
 
 WINDOW_HEIGHT = 500
 WINDOW_WIDTH = 800
@@ -29,8 +31,8 @@ class AddAudioWindow(QMainWindow):
          self.recordButton.adjustSize()
          self.hideActions()
 
-         # Create filename TODO : modifier "truc" avec timestamp
-         fname = l[0] + "_truc.wav"
+         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+         fname = l[0] + f"_{timestamp}.wav"
 
          # Start recording audio
          self.audioRecorder.record(fname, 8)
@@ -62,8 +64,17 @@ class AddAudioWindow(QMainWindow):
 
    def onConfirmClick(self):
       print("Confirm")
-      # TODO : Process folder with new audios
+      path = self.audioRecorder.getOutputFolderPath()
+      RealTest.upload_audio("model_clavier.keras", path)
+      #copyTo(path, )
       self.close()
+
+   def copyTo(source_path, destination_path):
+      # Chemin de destination avec le timestamp dans le nom de fichier
+      destination_path = f'/home/user/doc/file_{timestamp}.wav'
+
+      # Copie du fichier avec le nouveau nom
+      shutil.copy(source_path, destination_path)
 
    def onCancelClick(self):
       print("Canceled")

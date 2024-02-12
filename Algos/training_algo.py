@@ -11,9 +11,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 # Add arguments to the script
-parser = argparse.ArgumentParser(description='A program to train the AI.')
-parser.add_argument("src_csv", help="The .csv dataset path.")
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description='A program to train the AI.')
+# parser.add_argument("src_csv", help="The .csv dataset path.")
+# args = parser.parse_args()
 
 def fit_model(model_path, csv_path):
     data = np.loadtxt(csv_path, delimiter=',')
@@ -100,5 +100,5 @@ def first_fit(model_path, csv_path):
 
 
 # Implement Neurones
-if __name__ == "__main__":
-    first_fit('model_clavier2.keras', args.src_csv)
+# if __name__ == "__main__":
+#     first_fit('model_clavier2.keras', args.src_csv)

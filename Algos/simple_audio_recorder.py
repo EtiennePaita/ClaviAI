@@ -21,6 +21,9 @@ class SimpleAudioRecorder:
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+    def getOutputFolderPath(self):
+        return self.outputFolderPath
+
     def createEnv(self):
         # Create Output folder
         try:
