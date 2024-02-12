@@ -9,19 +9,14 @@ import sys
 from enum import Enum
 from Screens.add_audio_window import AddAudioWindow
 
-WINDOW_HEIGHT = 500
-WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 500#1500
+WINDOW_WIDTH = 800#1500
 
 class Alignment(Enum):
-   TOP_START = 1
-   TOP_CENTER = 2
-   TOP_END = 3
-   END_CENTER = 4
-   BOTTOM_SART = 5
-   BOTTOM_CENTER = 6
-   BOTTOM_END = 7
-   START_CENTER = 8
-   CENTER = 9
+   TOP_CENTER = 1
+   CENTER = 2
+   BOTTOM_CENTER = 3
+   BOTTOM_START = 10
 
 class MyWindow(QMainWindow):
 
@@ -44,16 +39,13 @@ class MyWindow(QMainWindow):
       self.recordButton.setText("Stop")
       self.recordButton.setStyleSheet('color: white; background-color: #B70000;')
       self.recordButton.adjustSize()
-      
       self.isRecordingValue.value = 1
 
    def stopRecording(self):
       print("Stop recording audio")
       self.recordButton.setText("Start")
-      
-      self.recordButton.setStyleSheet('color: white; background-color: #73C371;')
+      self.recordButton.setStyleSheet('background-color: #73C371;')
       self.recordButton.adjustSize()
-
       self.isRecordingValue.value = 0
 
    def onButtonClicked(self):
@@ -64,27 +56,16 @@ class MyWindow(QMainWindow):
          self.isRecording = True
          self.startRecording()
 
-   #qobject.move(int(WINDOW_WIDTH/2) - int(self.recordButton.frameGeometry().width()/2), int(WINDOW_HEIGHT - int(self.recordButton.frameGeometry().height())))
    def align_object(self, qobject, alignment):
-      if alignment == Alignment.TOP_START:
-         qobject.move(0, 0)
-      elif alignment == Alignment.TOP_CENTER:
-         qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), 0)
-      elif alignment == Alignment.TOP_END:
-         qobject.move(WINDOW_WIDTH - int(qobject.frameGeometry().width()), 0)
-      elif alignment == Alignment.END_CENTER:
-         qobject.move(WINDOW_WIDTH - int(qobject.frameGeometry().width()), int(WINDOW_HEIGHT/2) - int(qobject.frameGeometry().height()/2))
-      elif alignment == Alignment.BOTTOM_SART:
-         qobject.move(0, WINDOW_HEIGHT - int(qobject.frameGeometry().height()))
-      elif alignment == Alignment.BOTTOM_CENTER:
-         qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), WINDOW_HEIGHT - int(qobject.frameGeometry().height()))
-      elif alignment == Alignment.BOTTOM_END:
-         qobject.move(WINDOW_WIDTH - int(qobject.frameGeometry().width()), WINDOW_HEIGHT - int(qobject.frameGeometry().height()))
-      elif alignment == Alignment.START_CENTER:
-         qobject.move(0, int(WINDOW_HEIGHT/2) - int(qobject.frameGeometry().height()/2))
+      if alignment == Alignment.TOP_CENTER:
+         qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), WINDOW_HEIGHT - 700)
       elif alignment == Alignment.CENTER:
          qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), int(WINDOW_HEIGHT/2) - int(qobject.frameGeometry().height()/2))
-      
+      elif alignment == Alignment.BOTTOM_CENTER:
+         qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), WINDOW_HEIGHT - 200)
+      elif alignment == Alignment.BOTTOM_START:
+         qobject.move(int(WINDOW_WIDTH/2) - int(qobject.frameGeometry().width()/2), WINDOW_HEIGHT - 1100)
+   
    def returnString(self, steps = 30): 
       v = self.responseValue.value
       occ = int(len(v) / steps)
@@ -92,7 +73,6 @@ class MyWindow(QMainWindow):
    
 
    def updateUI(self):
-      
       self.generateTextLabel.setText(f"{self.responseValue.value}")
       self.generateTextLabel.adjustSize()
 
@@ -109,29 +89,25 @@ class MyWindow(QMainWindow):
       self.label.setText("Texte généré : ")
       self.label.adjustSize()
       self.label.setStyleSheet('color: white;')
-      #self.label.setAlignment(Qt.AlignCenter)
-      self.label.move(int(WINDOW_WIDTH/2) - int(self.label.frameGeometry().width()/2), int(WINDOW_HEIGHT/2) - int(self.label.frameGeometry().height()/2))
-      #self.align_object(self.label,Alignment.CENTER)
+      self.align_object(self.label, Alignment.CENTER)
 
       self.editText = QLineEdit(self)
-      self.align_object(self.editText,Alignment.TOP_CENTER)
+      self.editText.setMinimumHeight(200)
+      self.editText.setMinimumWidth(200)
+      self.align_object(self.editText,Alignment.BOTTOM_START)
       self.editText.setStyleSheet('color: white;') 
-      #self.align_object(self.label, Alignment.CENTER)
 
       self.recordButton = QPushButton(self)
       self.recordButton.setText("Start")
       self.recordButton.setAttribute(Qt.WA_StyledBackground, True)
-      self.recordButton.setStyleSheet('color: white; background-color: #73C371;')
+      self.recordButton.setStyleSheet('background-color: #73C371;')
       self.recordButton.adjustSize()
-      #self.recordButton.move(int(WINDOW_WIDTH/2) - (self.recordButton.frameGeometry().width()/2), int(WINDOW_HEIGHT - self.recordButton.frameGeometry().height()))
       self.recordButton.clicked.connect(self.onButtonClicked)
-      self.align_object(self.recordButton,Alignment.TOP_START)
+      self.align_object(self.recordButton, Alignment.BOTTOM_CENTER)
 
       self.generateTextLabel = QLabel(self)
       self.generateTextLabel.resize(300, 100) 
       self.generateTextLabel.setStyleSheet('color: white;')
-      self.align_object(self.generateTextLabel,Alignment.BOTTOM_CENTER)
-      
       self.generateTextLabel.setText(f"{self.responseValue.value}")
 
       #self.align_object(self.label,Alignment.BOTTOM_CENTER)
@@ -162,7 +138,6 @@ def windowProc(isRecordingValue,responseValue):
 
 
 def main():
-
    # Creation d'un manager de variable partagez entre les process
    manager = Manager()
 
@@ -183,7 +158,6 @@ def main():
    appProcess.start()
    appProcess.join()                         # join process to wait until it ends
    print(f"{responseValue.value}")             
-    
 
 
 if __name__ == "__main__":
