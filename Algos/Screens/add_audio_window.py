@@ -27,11 +27,10 @@ class AddAudioWindow(QMainWindow):
          self.recordButton.setText("Recording ...")
          self.recordButton.setStyleSheet('color: white; background-color: #B70000;')
          self.recordButton.adjustSize()
-         #self.startRecording()
          self.hideActions()
 
          # Create filename TODO : modifier "truc" avec timestamp
-         fname = l + "_truc.wav"
+         fname = l[0] + "_truc.wav"
 
          # Start recording audio
          self.audioRecorder.record(fname, 8)
